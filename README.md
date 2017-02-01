@@ -1,52 +1,22 @@
-# Play REST API
+# Play 2.5 Filter performance downgrade
 
-This is the example project for [Making a REST API in Play](http://developer.lightbend.com/guides/play-rest-api/index.html).
-
-## Appendix
+This is the example project for reproducing play 2.5 filter performance downgrade
 
 ### Running
 
-You need to download and install sbt for this application to run.
-
-Once you have sbt installed, the following at the command prompt will start up Play in development mode:
+Sbt comes prepackaged with the project, just download the project and enter following at the command prompt will start up Play in development mode:
 
 ```
 sbt run
 ```
 
-Play will start up on the HTTP port at http://localhost:9000/.   You don't need to reploy or reload anything -- changing any source code while the server is running will automatically recompile and hot-reload the application on the next HTTP request. 
-
-### Usage
-
-If you call the same URL from the command line, you’ll see JSON. Using httpie, we can execute the command:
+You can also create a distribution package using:-
 
 ```
-http --verbose http://localhost:9000/v1/posts
+sbt dist
 ```
 
-and get back:
-
-```
-GET /v1/posts HTTP/1.1
-```
-
-Likewise, you can also send a POST directly as JSON:
-
-```
-http --verbose POST http://localhost:9000/v1/posts title="hello" body="world"
-```
-
-and get:
-
-```
-POST /v1/posts HTTP/1.1
-```
-
-### Load Testing
-
-The best way to see what Play can do is to run a load test.  We've included Gatling in this test project for integrated load testing.
-
-Start Play in production mode, by [staging the application](https://www.playframework.com/documentation/2.5.x/Deploying) and running the play script:s
+or start Play in production mode, by [staging the application](https://www.playframework.com/documentation/2.5.x/Deploying) and running the play script:s
 
 ```
 sbt stage
@@ -54,18 +24,16 @@ cd target/universal/stage
 bin/play-rest-api -Dplay.crypto.secret=testing
 ```
 
-Then you'll start the Gatling load test up (it's already integrated into the project):
+### Problem
 
-```
-sbt gatling:test
-```
+I created a distribution package and uploaded it to AWS EC2 c3.xlarge machine.
 
-For best results, start the gatling load test up on another machine so you do not have contending resources.  You can edit the [Gatling simulation](http://gatling.io/docs/2.2.2/general/simulation_structure.html#simulation-structure), and change the numbers as appropriate.
+Load test /status API with and without Filters enabled. Filters can be enabled/disabled in application.conf just comment the filter configuration to disable it.
 
-Once the test completes, you'll see an HTML file containing the load test chart:
+Performance:-
 
-```
- ./rest-api/target/gatling/gatlingspec-1472579540405/index.html
-```
+Filters Disabled: 34K req/sec
 
-That will contain your load test results.
+Filters Enabled:  19K req/sec
+
+FYI: JMeter was used to load test from an external machine on AWS EC2.

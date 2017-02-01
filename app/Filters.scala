@@ -6,7 +6,7 @@ import scala.concurrent.{Future}
 import scala.language.postfixOps
 import akka.stream.Materializer
 
-@Singleton class Filters @Inject()(mat: Materializer) extends HttpFilters {
+@Singleton class MyFilters @Inject()(mat: Materializer) extends HttpFilters {
   override val filters = Seq(TestFilter(mat))
 }
 
