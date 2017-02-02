@@ -2,7 +2,7 @@ import javax.inject._
 
 import play.api.http.HttpFilters
 import play.api.mvc.{Result, RequestHeader, Filter}
-import scala.concurrent.{Future}
+import scala.concurrent.Future
 import scala.language.postfixOps
 import akka.stream.Materializer
 
@@ -15,8 +15,6 @@ object  TestFilter {
 }
 
 class TestFilter(implicit val mat: Materializer) extends Filter {
-
-  implicit val ctx = play.api.libs.iteratee.Execution.trampoline
 
   override def apply(nextFilter: RequestHeader => Future[Result])
                     (requestHeader: RequestHeader): Future[Result] = {
