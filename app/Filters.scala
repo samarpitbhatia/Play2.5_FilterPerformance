@@ -1,25 +1,14 @@
 import javax.inject._
 
 import play.api.http.HttpFilters
-import play.api.mvc.{Result, RequestHeader, Filter}
-import scala.concurrent.Future
+import play.api.mvc._
+
 import scala.language.postfixOps
-import akka.stream.Materializer
 
-@Singleton class MyFilters @Inject()(mat: Materializer) extends HttpFilters {
-  override val filters = Seq(TestFilter(mat))
+@Singleton class MyFilters @Inject()() extends HttpFilters {
+  override val filters = Seq(new TestFilter())
 }
 
-object  TestFilter {
-  def apply(mat: Materializer) = new TestFilter()(mat)
-}
-
-class TestFilter(implicit val mat: Materializer) extends Filter {
-
-  override def apply(nextFilter: RequestHeader => Future[Result])
-                    (requestHeader: RequestHeader): Future[Result] = {
-
-    nextFilter(requestHeader)
-
-  }
+class TestFilter extends EssentialFilter {
+  override def apply(next: EssentialAction): EssentialAction = EssentialAction(next)
 }
